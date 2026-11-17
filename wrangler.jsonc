@@ -27,7 +27,7 @@
   ],
 
   "vars": {
-    "SHOW_SAMPLES": "true"   // show the sample figures while the shelf is empty; set to "false" once live
+    "SHOW_SAMPLES": "false"   // "true" shows the sample figures while the shelf is empty
   },
 
   // Optional email when a request comes in. Needs Email Routing turned on for
