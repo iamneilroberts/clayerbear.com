@@ -472,3 +472,14 @@ figcaption {
   .detail-grid { grid-template-columns: 1fr; }
   .only-available { margin-left: 0; }
 }
+
+/* figure page */
+
+.figure-page { max-width: var(--page); margin: 0 auto; padding: clamp(1.5rem, 4vw, 3rem) var(--gutter) 1rem; }
+.figure-page h1 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); margin-bottom: 0.6rem; }
+.figure-status { margin: 0.6rem 0 0; font-size: 0.98rem; color: var(--cocoa-soft); }
+.figure-page .detail-tags { margin: 0.4rem 0 0; }
+.figure-back { margin-top: 2rem; }
+.gallery-thumbs a { flex: 0 0 4rem; border: 3px solid transparent; border-radius: 10px; overflow: hidden; }
+.gallery-thumbs a[aria-current="true"] { border-color: var(--lavender); }
+.figure-page.is-sold .tag-price { color: var(--cocoa-soft); text-decoration: line-through; }

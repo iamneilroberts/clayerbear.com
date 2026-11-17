@@ -5,11 +5,11 @@
   "compatibility_date": "2026-11-01",
 
   // The website itself: everything in /public is served as-is.
-  // Only /api/* and /img/* run the Worker code.
+  // /api/*, /img/*, /theme.css, /figure/*, /sitemap.xml and /robots.txt run the Worker code.
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*", "/img/*", "/theme.css"]
+    "run_worker_first": ["/api/*", "/img/*", "/theme.css", "/figure/*", "/sitemap.xml", "/robots.txt"]
   },
 
   // Once a day: renew the Instagram token so it never expires.

@@ -8,6 +8,8 @@
 //   POST /api/requests           custom-figure requests
 //   GET  /theme.css              colors and fonts chosen in Admin > Look
 //   GET  /img/<key>              photos, logos and uploaded fonts (R2)
+//   GET  /figure/<slug>-<id>     one figure as a real page (for search engines and sharing)
+//   GET  /sitemap.xml, /robots.txt
 //   *    /api/admin/...          the admin pages (password protected)
 
 import { EmailMessage } from 'cloudflare:email';
@@ -15,6 +17,7 @@ import { json, fail, clean, ensureSchema, getSettings, getTheme, themeCss, loadI
 import { admin } from './admin.js';
 import { checkoutEnabled, createCheckout, cancelCheckout, stripeWebhook } from './stripe.js';
 import { refreshInstagramToken } from './instagram.js';
+import { LISTED, figurePath, figurePage, notFoundPage, sitemap, robots } from './pages.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -26,6 +29,16 @@ export default {
       if (path === '/theme.css') {
         await ensureSchema(env);
         return new Response(themeCss(await getTheme(env)), { headers: { 'content-type': 'text/css; charset=utf-8', 'cache-control': 'public, max-age=60' } });
+      }
+      if (path === '/robots.txt') return new Response(robots(), { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+      if (path === '/sitemap.xml') {
+        await ensureSchema(env);
+        const rows = (await loadItems(env, `WHERE ${LISTED}`)).filter((r) => r.photo_keys.length);
+        return new Response(sitemap(rows), { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=300' } });
+      }
+      if (path.startsWith('/figure/')) {
+        await ensureSchema(env);
+        return await figure(env, path.slice('/figure/'.length));
       }
       if (!path.startsWith('/api/')) return env.ASSETS.fetch(request);
 
@@ -66,8 +79,8 @@ async function site(env) {
 }
 
 async function listItems(request, env) {
-  const rows = await loadItems(env, "WHERE status IN ('available','sold') AND price_cents IS NOT NULL");
-  const items = rows.filter((r) => r.photo_keys.length).map((r) => publicItem(r));
+  const rows = await loadItems(env, `WHERE ${LISTED}`);
+  const items = rows.filter((r) => r.photo_keys.length).map((r) => ({ ...publicItem(r), url: figurePath(r.title, r.id) }));
   items.sort((a, b) => (a.status === 'sold') - (b.status === 'sold'));
 
   // Brand-new site with nothing listed yet: optionally show the sample figures.
@@ -75,6 +88,21 @@ async function listItems(request, env) {
     return env.ASSETS.fetch(new Request(new URL('/sample/items.json', request.url)));
   }
   return json({ items }, 200, { 'cache-control': 'no-store' });
+}
+
+// /figure/<slug>-<id>: the id is the part after the last hyphen. A stale or
+// missing slug redirects to the current address; anything not listed is a 404.
+async function figure(env, ref) {
+  const theme = await getTheme(env);
+  const look = { logo: theme.logo_key ? '/img/' + theme.logo_key : null, favicon: theme.favicon_key ? '/img/' + theme.favicon_key : null };
+  const page = (html, status, cache) => new Response(html, { status, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': cache } });
+  try { ref = decodeURIComponent(ref).replace(/\/$/, ''); } catch { ref = ''; }
+  const id = ref.slice(ref.lastIndexOf('-') + 1);
+  const row = /^\w+$/.test(id) ? (await loadItems(env, `WHERE id = ? AND ${LISTED}`, [id]))[0] : null;
+  if (!row || !row.photo_keys.length) return page(notFoundPage(look), 404, 'no-store');
+  const canonical = figurePath(row.title, row.id);
+  if ('/figure/' + ref !== canonical) return new Response(null, { status: 301, headers: { location: canonical } });
+  return page(figurePage(publicItem(row), { ...look, checkout: checkoutEnabled(env) }), 200, 'public, max-age=60');
 }
 
 async function serveFile(request, env, ctx, key) {
