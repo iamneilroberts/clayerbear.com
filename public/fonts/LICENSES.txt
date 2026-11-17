@@ -1,0 +1,9 @@
+Fonts in this folder are redistributed under their open licences.
+
+SIL Open Font License 1.1 (https://openfontlicense.org):
+  Fredoka, Baloo 2, Nunito, Quicksand, Lora, Patrick Hand, Caveat, Gaegu
+
+Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0):
+  Chewy
+
+Files are the Latin subsets published by Fontsource (https://fontsource.org).

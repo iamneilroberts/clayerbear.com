@@ -1,0 +1,11 @@
+/* Typefaces that ship with the site. A browser only downloads the ones the
+   theme actually uses. Claire can also upload her own in Admin > Look. */
+@font-face { font-family: "Fredoka";      src: url("fredoka.woff2") format("woff2");      font-weight: 300 700; font-display: swap; }
+@font-face { font-family: "Baloo 2";      src: url("baloo-2.woff2") format("woff2");      font-weight: 400 800; font-display: swap; }
+@font-face { font-family: "Nunito";       src: url("nunito.woff2") format("woff2");       font-weight: 200 1000; font-display: swap; }
+@font-face { font-family: "Quicksand";    src: url("quicksand.woff2") format("woff2");    font-weight: 300 700; font-display: swap; }
+@font-face { font-family: "Lora";         src: url("lora.woff2") format("woff2");         font-weight: 400 700; font-display: swap; }
+@font-face { font-family: "Chewy";        src: url("chewy.woff2") format("woff2");        font-weight: 400; font-display: swap; }
+@font-face { font-family: "Patrick Hand"; src: url("patrick-hand.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Caveat";       src: url("caveat.woff2") format("woff2");       font-weight: 400 700; font-display: swap; }
+@font-face { font-family: "Gaegu";        src: url("gaegu.woff2") format("woff2");        font-weight: 400; font-display: swap; }

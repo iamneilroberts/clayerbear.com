@@ -1,0 +1,12 @@
+{
+  "demo": true,
+  "items": [
+    { "id": "sample-calico", "title": "Round calico cat", "description": "A very round calico with blue eyes and four tiny paws. Sits flat, or stands on a pick in a plant pot.", "category": "Cats", "tags": ["cat", "calico", "round"], "grams": 20, "price_cents": 2000, "status": "available", "photos": ["sample/calico-cat.jpg"], "permalink": null },
+    { "id": "sample-bear", "title": "Brown bear", "description": "Stocky brown bear with a pale muzzle and a slightly worried look.", "category": "Bears", "tags": ["bear", "brown"], "grams": 20, "price_cents": 2000, "status": "available", "photos": ["sample/brown-bear.jpg", "sample/bear-with-fish.jpg"], "permalink": null },
+    { "id": "sample-apple", "title": "Worm in an apple", "description": "A pink worm peeking out of a red apple with one green leaf.", "category": "Oddballs", "tags": ["worm", "apple", "fruit"], "grams": 10, "price_cents": 1000, "status": "sold", "photos": ["sample/apple-worm.jpg"], "permalink": null },
+    { "id": "sample-horse", "title": "Chestnut horse", "description": "Chestnut horse with a cream mane and tail and white socks.", "category": "Horses", "tags": ["horse", "chestnut", "pony"], "grams": 20, "price_cents": 2000, "status": "available", "photos": ["sample/chestnut-horse.jpg"], "permalink": null },
+    { "id": "sample-ponies", "title": "Two ponies", "description": "A spotted appaloosa and a dark bay with a blaze. Sold as a pair.", "category": "Horses", "tags": ["horse", "pony", "appaloosa", "spotty"], "grams": 20, "price_cents": 2000, "status": "sold", "photos": ["sample/ponies.jpg"], "permalink": null },
+    { "id": "sample-tabby", "title": "Ghost cat and orange tabby", "description": "A grey ghost cat and a small orange tabby who keep each other company.", "category": "Cats", "tags": ["cat", "ghost", "tabby", "orange"], "grams": 10, "price_cents": 1000, "status": "available", "photos": ["sample/ghost-and-tabby.jpg"], "permalink": null },
+    { "id": "sample-fish", "title": "Bear with a fish", "description": "Small brown bear holding the blue fish it just caught.", "category": "Bears", "tags": ["bear", "fish"], "grams": 10, "price_cents": 1000, "status": "available", "photos": ["sample/bear-with-fish.jpg"], "permalink": null }
+  ]
+}

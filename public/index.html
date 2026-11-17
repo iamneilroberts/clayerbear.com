@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clayer Bear: tiny clay animals by Claire</title>
+  <meta name="description" content="One-of-a-kind polymer clay animal figures, hand sculpted, baked, painted and glazed by Claire. Custom figures made from a photo or a description.">
+  <meta property="og:title" content="Clayer Bear">
+  <meta property="og:description" content="One-of-a-kind polymer clay animal figures by Claire.">
+  <meta property="og:image" content="photos/market-shelf.jpg">
+  <link rel="icon" id="favicon" href="favicon.svg">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Colors, fonts and logo chosen in Admin > Look. Loaded last so it wins. -->
+  <link rel="stylesheet" href="/theme.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="wordmark" id="wordmark" href="#top" aria-label="Clayer Bear, home">
+    <span class="wordmark-clayer">clayer</span>
+    <span class="wordmark-bear">bear</span>
+  </a>
+  <nav class="top-nav" aria-label="Main">
+    <a href="#shop">Shop</a>
+    <a href="#custom">Custom figures</a>
+    <a href="#prices">Prices</a>
+    <a class="ig-link" href="https://www.instagram.com/clayerbearshop/" rel="noopener">Instagram</a>
+    <button type="button" class="bag-button" id="bag-button" hidden>Bag <span id="bag-count">0</span></button>
+  </nav>
+</header>
+
+<p class="notice" id="notice" role="status" hidden></p>
+
+<main id="top">
+
+  <section class="hello">
+    <div class="hello-words">
+      <h1 id="hero-title">Hi, I'm Claire. I make tiny clay animals.</h1>
+      <p id="hero-text">Each one is sculpted by hand from polymer clay, baked, painted and glazed. No molds, so no two come out the same.</p>
+      <p class="hello-actions">
+        <a class="button" href="#shop">See what's on the shelf</a>
+        <a class="button button-quiet" href="#custom">Ask for a custom one</a>
+      </p>
+    </div>
+    <figure class="hello-photo">
+      <img id="hero-img" src="sample/calico-cat.jpg" alt="A clay figure by Claire" width="1125" height="1500">
+      <figcaption>Fresh out of the glaze</figcaption>
+    </figure>
+  </section>
+
+  <section class="shop" id="shop">
+    <div class="shop-head">
+      <h2>On the shelf</h2>
+      <label class="search">
+        <span class="sr-only">Search figures</span>
+        <input type="search" id="search" placeholder="Search: cat, horse, spotty" autocomplete="off">
+      </label>
+    </div>
+    <!-- shop.js fills these from the categories Claire uses. -->
+    <div class="filters" id="filters" role="group" aria-label="Filter figures"></div>
+    <p class="shop-note" id="shop-note" hidden></p>
+    <!-- shop.js fills this list. Each <li> is one figure standing on its piece of shelf. -->
+    <ul class="shelf" id="shelf" aria-live="polite"></ul>
+  </section>
+
+  <section class="custom" id="custom">
+    <div class="custom-words">
+      <h2>Want one made for you?</h2>
+      <p>Send me a photo of your pet, or just describe the animal you have in mind, and I'll sculpt it. Your dog with the one floppy ear. A horse you used to ride. A frog in a hat.</p>
+      <p>I'll write back with any questions and a price before I start. For now custom figures cost the same as the ones on the shelf.</p>
+      <figure class="custom-photo">
+        <img src="photos/workbench.jpg" alt="Claire's workbench with painted figures hanging on a wire to dry" loading="lazy" width="1125" height="1500">
+        <figcaption>Drying line at the workbench</figcaption>
+      </figure>
+    </div>
+
+    <form class="request-form" id="custom-form" novalidate>
+      <input type="hidden" name="kind" value="custom">
+      <input type="hidden" name="item_id" value="">
+      <p class="form-ref" id="custom-ref" hidden></p>
+
+      <label for="c-message">What should I make?</label>
+      <textarea id="c-message" name="message" rows="5" required placeholder="Animal, colors, pose, anything that makes them them"></textarea>
+
+      <label for="c-photo">Photo, if you have one</label>
+      <input id="c-photo" name="photo" type="file" accept="image/*">
+
+      <fieldset class="sizes">
+        <legend>Size</legend>
+        <label><input type="radio" name="grams" value="10" checked> <span>10g <small>about a thumb tall</small></span></label>
+        <label><input type="radio" name="grams" value="20"> <span>20g <small>fills your palm</small></span></label>
+        <label><input type="radio" name="grams" value=""> <span>Not sure</span></label>
+      </fieldset>
+
+      <div class="form-pair">
+        <div>
+          <label for="c-name">Your name</label>
+          <input id="c-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div>
+          <label for="c-email">Email</label>
+          <input id="c-email" name="email" type="email" autocomplete="email" required>
+        </div>
+      </div>
+
+      <!-- Spam trap: real people never see or fill this. -->
+      <div class="trap" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+      <button class="button" type="submit">Send request</button>
+      <p class="form-status" role="status"></p>
+    </form>
+  </section>
+
+  <section class="prices" id="prices">
+    <div class="prices-words">
+      <h2>Priced by weight</h2>
+      <p>Every figure goes on the scale when it's finished. A dollar a gram.</p>
+      <dl class="price-list">
+        <div><dt>10g</dt><dd id="price-10">$10</dd></div>
+        <div><dt>20g</dt><dd id="price-20">$20</dd></div>
+      </dl>
+      <p class="prices-small">Most figures are one of these two sizes. If one comes out in between, its tag says so.</p>
+    </div>
+    <figure class="prices-photo">
+      <img src="photos/market-shelf.jpg" alt="Rows of clay animals on a white tiered display at a craft market" loading="lazy" width="1125" height="1430">
+      <figcaption>The market table</figcaption>
+    </figure>
+  </section>
+
+</main>
+
+<footer class="bottom">
+  <p>New figures, works in progress and workbench mess are on Instagram: <a href="https://www.instagram.com/clayerbearshop/" rel="noopener">@clayerbearshop</a></p>
+  <p class="bottom-small">Polymer clay figures are small and breakable. They are decorations, not toys for little kids or pets.</p>
+  <!-- For Claire. On the preview page shop.js points these at the demo admin and the overview doc. -->
+  <p class="bottom-small owner-links" id="owner-links"><a id="admin-link" href="admin/">Shop admin</a></p>
+</footer>
+
+<!-- One figure, close up. Opens when a photo or name is clicked. -->
+<dialog class="sheet detail" id="detail-dialog" aria-labelledby="detail-title">
+  <button class="sheet-close" type="button" data-close aria-label="Close">Close</button>
+  <div class="detail-grid">
+    <div class="gallery">
+      <img class="gallery-main" id="detail-main" src="" alt="">
+      <div class="gallery-thumbs" id="detail-thumbs"></div>
+    </div>
+    <div class="detail-words">
+      <h3 id="detail-title"></h3>
+      <p class="tag" id="detail-tag"></p>
+      <p class="detail-desc" id="detail-desc"></p>
+      <p class="detail-tags" id="detail-tags"></p>
+      <div class="detail-actions" id="detail-actions"></div>
+    </div>
+  </div>
+</dialog>
+
+<!-- The bag. -->
+<dialog class="sheet bag" id="bag-dialog" aria-labelledby="bag-title">
+  <button class="sheet-close" type="button" data-close aria-label="Close">Close</button>
+  <h3 id="bag-title">Your bag</h3>
+  <ul class="bag-list" id="bag-list"></ul>
+  <p class="bag-total" id="bag-total"></p>
+  <p class="bag-ship" id="bag-ship"></p>
+  <button class="button" type="button" id="checkout">Check out</button>
+  <p class="form-status" id="bag-status" role="status"></p>
+</dialog>
+
+<!-- Used only while card checkout is switched off: ask for a figure by email. -->
+<dialog class="sheet buy" id="buy-dialog" aria-labelledby="buy-title">
+  <form class="request-form" id="buy-form" novalidate>
+    <input type="hidden" name="kind" value="buy">
+    <input type="hidden" name="item_id" value="">
+    <div class="buy-item">
+      <img id="buy-img" src="" alt="">
+      <div>
+        <h3 id="buy-title"></h3>
+        <p class="tag" id="buy-tag"></p>
+      </div>
+    </div>
+    <p class="buy-how">Send me your details and I'll hold it for you and write back about payment and getting it to you.</p>
+    <label for="b-name">Your name</label>
+    <input id="b-name" name="name" type="text" autocomplete="name" required>
+    <label for="b-email">Email</label>
+    <input id="b-email" name="email" type="email" autocomplete="email" required>
+    <label for="b-message">Anything I should know? <small>optional</small></label>
+    <textarea id="b-message" name="message" rows="3" placeholder="Shipping or pickup, gift, deadline"></textarea>
+    <div class="trap" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+    <div class="buy-actions">
+      <button class="button" type="submit">Send request</button>
+      <button class="button button-quiet" type="button" data-close>Close</button>
+    </div>
+    <p class="form-status" role="status"></p>
+  </form>
+</dialog>
+
+<script src="shop.js"></script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Clayer Bear admin</title>
+  <link rel="icon" href="../favicon.svg">
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<header class="bar">
+  <strong>Clayer Bear admin</strong>
+  <a href="/" target="_blank" rel="noopener">View the shop</a>
+</header>
+
+<form class="login" id="login">
+  <label for="pw">Password</label>
+  <input id="pw" type="password" autocomplete="current-password" required>
+  <button class="btn" type="submit">Open</button>
+  <p class="msg bad" id="login-msg"></p>
+</form>
+
+<div id="app" hidden>
+  <nav class="tabs" role="tablist" aria-label="Admin sections">
+    <button role="tab" data-tab="figures" aria-selected="true">Figures</button>
+    <button role="tab" data-tab="orders">Orders <span class="count" id="orders-count" hidden></span></button>
+    <button role="tab" data-tab="look">Look</button>
+    <button role="tab" data-tab="settings">Shop settings</button>
+  </nav>
+
+  <!-- ============ Figures ============ -->
+  <section id="tab-figures">
+    <div id="list-view">
+      <div class="toolbar">
+        <button class="btn" type="button" id="new-item">New figure</button>
+        <input type="search" id="item-search" placeholder="Search name, category, tag" aria-label="Search figures">
+        <select id="item-status" aria-label="Show">
+          <option value="">All</option>
+          <option value="draft">Drafts</option>
+          <option value="available">On the shelf</option>
+          <option value="sold">Sold</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+      <p class="hint">Tick figures to put them in one Instagram post.</p>
+      <ul class="rows" id="item-list"></ul>
+      <div class="selection" id="selection" hidden>
+        <span id="selection-count"></span>
+        <button class="btn" type="button" id="post-selected">Post to Instagram</button>
+        <button class="btn quiet" type="button" id="clear-selected">Clear</button>
+      </div>
+    </div>
+
+    <form id="editor" hidden novalidate>
+      <button class="link" type="button" id="back">Back to all figures</button>
+      <h2 id="editor-heading">Figure</h2>
+
+      <fieldset>
+        <legend>Photos</legend>
+        <p class="hint">The first photo is the one on the shelf. Use the arrows to reorder.</p>
+        <ul class="photos" id="photo-list"></ul>
+        <label class="btn quiet file">Add photos<input type="file" id="add-photos" accept="image/*" multiple></label>
+        <span class="msg" id="photo-msg"></span>
+      </fieldset>
+
+      <label for="f-title">Name</label>
+      <input id="f-title" type="text" maxlength="80" required>
+
+      <label for="f-description">Description</label>
+      <textarea id="f-description" rows="4" maxlength="2000"></textarea>
+
+      <div class="pair">
+        <div>
+          <label for="f-category">Category</label>
+          <input id="f-category" type="text" maxlength="40" list="category-list" placeholder="Cats, Horses, Oddballs">
+          <datalist id="category-list"></datalist>
+        </div>
+        <div>
+          <label for="f-tags">Tags <small>comma separated</small></label>
+          <input id="f-tags" type="text" placeholder="calico, round, blue eyes">
+        </div>
+      </div>
+
+      <div class="pair three">
+        <div>
+          <label for="f-grams">Weight (g)</label>
+          <input id="f-grams" type="number" min="1" max="999" inputmode="numeric">
+        </div>
+        <div>
+          <label for="f-price">Price ($)</label>
+          <input id="f-price" type="number" min="0" step="0.01" inputmode="decimal">
+          <small id="price-hint"></small>
+        </div>
+        <div>
+          <label for="f-status">Where it is</label>
+          <select id="f-status">
+            <option value="draft">Draft (not shown)</option>
+            <option value="available">On the shelf</option>
+            <option value="sold">Sold (still shown)</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="submit">Save</button>
+        <button class="btn quiet" type="button" id="post-one">Post to Instagram</button>
+        <button class="btn danger" type="button" id="delete-item">Delete</button>
+      </div>
+      <p class="msg" id="editor-msg" role="status"></p>
+    </form>
+  </section>
+
+  <!-- ============ Orders ============ -->
+  <section id="tab-orders" hidden>
+    <h2>Paid orders</h2>
+    <ul class="rows" id="order-list"></ul>
+    <h2>Requests</h2>
+    <p class="hint">Custom figures and "make me one like this".</p>
+    <ul class="rows" id="request-list"></ul>
+  </section>
+
+  <!-- ============ Look ============ -->
+  <section id="tab-look" hidden>
+    <div class="look">
+      <form id="look-form" novalidate>
+        <h2>Colors</h2>
+        <div class="presets" id="presets"></div>
+        <div class="colors" id="colors"></div>
+        <p class="msg bad" id="contrast-msg"></p>
+
+        <h2>Typefaces</h2>
+        <div class="pair three">
+          <div><label for="font-head">Headings, logo, buttons</label><select id="font-head"></select></div>
+          <div><label for="font-body">Reading text</label><select id="font-body"></select></div>
+          <div><label for="font-hand">Price tags, captions</label><select id="font-hand"></select></div>
+        </div>
+        <fieldset>
+          <legend>Your own font</legend>
+          <p class="hint">Upload a .woff2, .woff, .ttf or .otf you have a licence to use on a website. It then appears in the lists above.</p>
+          <div class="toolbar">
+            <input id="font-name" type="text" maxlength="40" placeholder="Name it" aria-label="Font name">
+            <label class="btn quiet file">Choose font file<input type="file" id="font-file" accept=".woff2,.woff,.ttf,.otf"></label>
+          </div>
+          <ul class="chips" id="custom-fonts"></ul>
+        </fieldset>
+
+        <h2>Logo and photos</h2>
+        <div class="images" id="images"></div>
+
+        <div class="actions sticky">
+          <button class="btn" type="submit">Save look</button>
+          <button class="btn quiet" type="button" id="look-undo">Undo changes</button>
+        </div>
+        <p class="msg" id="look-msg" role="status"></p>
+      </form>
+
+      <aside class="preview" id="preview" aria-label="Preview">
+        <p class="preview-label">Preview</p>
+        <div class="pv" id="pv">
+          <div class="pv-logo" id="pv-logo"><span class="pv-clayer">clayer</span><span class="pv-bear">bear</span></div>
+          <div class="pv-h">Hi, I'm Claire.</div>
+          <p class="pv-p">Each one is sculpted by hand, baked, painted and glazed.</p>
+          <span class="pv-btn">Add to bag</span>
+          <div class="pv-card"><span class="pv-tag">20g : <b>$20</b></span><span class="pv-chip">Cats</span></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ Settings ============ -->
+  <section id="tab-settings" hidden>
+    <form id="settings-form" novalidate>
+      <h2>Front page words</h2>
+      <label for="s-hero-title">Headline</label>
+      <input id="s-hero-title" type="text" maxlength="120">
+      <label for="s-hero-text">Intro</label>
+      <textarea id="s-hero-text" rows="3" maxlength="600"></textarea>
+
+      <h2>Prices and shipping</h2>
+      <div class="pair three">
+        <div><label for="s-per-gram">Price per gram ($)</label><input id="s-per-gram" type="number" min="0" step="0.01" inputmode="decimal"></div>
+        <div><label for="s-ship">Shipping per order ($)</label><input id="s-ship" type="number" min="0" step="0.01" inputmode="decimal"></div>
+        <div><label for="s-ship-label">Shipping is called</label><input id="s-ship-label" type="text" maxlength="60"></div>
+      </div>
+      <label class="check"><input id="s-pickup" type="checkbox"> Also offer free pickup</label>
+      <label for="s-pickup-label">Pickup is called</label>
+      <input id="s-pickup-label" type="text" maxlength="60">
+
+      <h2>Instagram posts</h2>
+      <label for="s-ig-tags">Hashtags added to every post draft</label>
+      <input id="s-ig-tags" type="text" maxlength="400">
+
+      <div class="actions">
+        <button class="btn" type="submit">Save settings</button>
+      </div>
+      <p class="msg" id="settings-msg" role="status"></p>
+    </form>
+
+    <h2>Connections</h2>
+    <ul class="status" id="connections"></ul>
+  </section>
+</div>
+
+<!-- Instagram post composer -->
+<dialog id="ig-dialog" aria-labelledby="ig-title">
+  <form id="ig-form" novalidate>
+    <h2 id="ig-title">Post to Instagram</h2>
+    <p class="hint" id="ig-account"></p>
+    <fieldset>
+      <legend>Photos <small id="ig-photo-count"></small></legend>
+      <p class="hint">Tick the ones to include, in the order shown. Instagram needs photos between portrait 4:5 and wide 1.91:1, so taller ones are trimmed top and bottom.</p>
+      <ul class="photos pick" id="ig-photos"></ul>
+    </fieldset>
+    <label for="ig-caption">Caption <small id="ig-caption-count"></small></label>
+    <textarea id="ig-caption" rows="9"></textarea>
+    <div class="actions">
+      <button class="btn" type="submit" id="ig-publish">Publish now</button>
+      <button class="btn quiet" type="button" id="ig-close">Close</button>
+    </div>
+    <p class="msg" id="ig-msg" role="status"></p>
+  </form>
+</dialog>
+
+<script src="admin.js"></script>
+</body>
+</html>

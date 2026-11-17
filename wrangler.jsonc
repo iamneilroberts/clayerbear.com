@@ -1,0 +1,51 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "clayerbear",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-01",
+
+  // The website itself: everything in /public is served as-is.
+  // Only /api/* and /img/* run the Worker code.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/img/*", "/theme.css"]
+  },
+
+  // Once a day: renew the Instagram token so it never expires.
+  "triggers": { "crons": ["17 9 * * *"] },
+
+  // Figures, orders, requests and settings. After `npx wrangler d1 create clayerbear`,
+  // paste the database_id it prints here.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "clayerbear", "database_id": "PASTE-ID-FROM-wrangler-d1-create" }
+  ],
+
+  // Figure photos, logo and font uploads, and photos customers attach to requests.
+  "r2_buckets": [
+    { "binding": "PHOTOS", "bucket_name": "clayerbear-photos" }
+  ],
+
+  "vars": {
+    "SHOW_SAMPLES": "true"   // show the sample figures while the shelf is empty; set to "false" once live
+  },
+
+  // Optional email when a request comes in. Needs Email Routing turned on for
+  // clayerbear.com and the destination address verified there. Then uncomment
+  // this and the three NOTIFY lines.
+  // "send_email": [{ "name": "NOTIFY", "destination_address": "claire@example.com" }],
+  // and add to "vars":  "NOTIFY_FROM": "shop@clayerbear.com", "NOTIFY_TO": "claire@example.com"
+
+  "routes": [
+    { "pattern": "clayerbear.com", "custom_domain": true },
+    { "pattern": "www.clayerbear.com", "custom_domain": true }
+  ],
+
+  "observability": { "enabled": true }
+
+  // Secrets (set with `npx wrangler secret put NAME`, never written here):
+  //   ADMIN_PASSWORD          password for /admin
+  //   STRIPE_SECRET_KEY       turns on card checkout (see README)
+  //   STRIPE_WEBHOOK_SECRET   lets Stripe tell the site a payment went through
+  //   IG_ACCESS_TOKEN         lets the admin page post to Instagram (see README)
+}
