@@ -18,7 +18,7 @@
   // Figures, orders, requests and settings. After `npx wrangler d1 create clayerbear`,
   // paste the database_id it prints here.
   "d1_databases": [
-    { "binding": "DB", "database_name": "clayerbear", "database_id": "PASTE-ID-FROM-wrangler-d1-create" }
+    { "binding": "DB", "database_name": "clayerbear", "database_id": "575f096d-2b89-4957-8c25-0aaefcc63225" }
   ],
 
   // Figure photos, logo and font uploads, and photos customers attach to requests.
