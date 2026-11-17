@@ -59,9 +59,13 @@
     </div>
     <!-- shop.js fills these from the categories Claire uses. -->
     <div class="filters" id="filters" role="group" aria-label="Filter figures"></div>
+    <div class="shop-count" id="shop-count-row">
+      <p id="shop-count" role="status"></p>
+      <button type="button" class="link-button" id="clear-filters" hidden>Clear search and filters</button>
+    </div>
     <p class="shop-note" id="shop-note" hidden></p>
     <!-- shop.js fills this list. Each <li> is one figure standing on its piece of shelf. -->
-    <ul class="shelf" id="shelf" aria-live="polite"></ul>
+    <ul class="shelf" id="shelf"></ul>
   </section>
 
   <section class="custom" id="custom">
@@ -151,6 +155,7 @@
       <p class="detail-desc" id="detail-desc"></p>
       <p class="detail-tags" id="detail-tags"></p>
       <div class="detail-actions" id="detail-actions"></div>
+      <p class="detail-status" id="detail-status" role="status"></p>
     </div>
   </div>
 </dialog>

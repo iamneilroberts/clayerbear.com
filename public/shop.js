@@ -16,6 +16,18 @@ let items = [];
 let site = { checkout: false, shipping_cents: 0, shipping_label: 'Shipping', price_per_gram_cents: 100 };
 let demo = false;                       // true while only the sample figures are showing
 const view = { category: '', search: '', onlyAvailable: false };
+{ const q = new URLSearchParams(location.search); view.search = (q.get('q') || '').trim(); view.category = q.get('category') || ''; }
+$('search').value = view.search;
+
+// Keep q and category in the address (other parameters and the #hash stay).
+// push = true adds a history entry so Back works; otherwise the entry is replaced.
+function syncUrl(push) {
+  const q = new URLSearchParams(location.search);
+  for (const [k, v] of [['q', view.search], ['category', view.category]]) v ? q.set(k, v) : q.delete(k);
+  const qs = q.toString();
+  const next = location.pathname + (qs ? '?' + qs : '') + location.hash;
+  if (next !== location.pathname + location.search + location.hash) history[push ? 'pushState' : 'replaceState'](null, '', next);
+}
 
 const money = (cents) => '$' + (cents % 100 === 0 ? cents / 100 : (cents / 100).toFixed(2));
 
@@ -91,12 +103,25 @@ function figure(item) {
   );
 }
 
+// Singular guess for simple plurals: ponies -> pony, boxes -> box, cats -> cat.
+function singular(w) {
+  const s = w.replace(/ies$/, 'y').replace(/(s|x|z|ch|sh)es$/, '$1').replace(/([^s])s$/, '$1');
+  return s.length >= 3 ? s : w;
+}
+// Every typed word must start some word of the figure, either as typed or as its singular, or the other way round.
+function wordsMatch(typed, text) {
+  const hay = text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  return typed.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).every((t) => {
+    const st = singular(t);
+    return hay.some((h) => h.startsWith(t) || h.startsWith(st) || singular(h).startsWith(t));
+  });
+}
+
 function matches(item) {
   if (view.category && item.category !== view.category) return false;
   if (view.onlyAvailable && item.status !== 'available') return false;
   if (view.search) {
-    const hay = [item.title, item.description, item.category, ...(item.tags || [])].join(' ').toLowerCase();
-    if (!view.search.toLowerCase().split(/\s+/).every((word) => hay.includes(word))) return false;
+    if (!wordsMatch(view.search, [item.title, item.description, item.category, ...(item.tags || [])].join(' '))) return false;
   }
   return true;
 }
@@ -109,15 +134,49 @@ function draw() {
     note.replaceChildren('The shelf is empty right now. New figures show up on ',
       el('a', { href: INSTAGRAM, rel: 'noopener', text: 'Instagram' }), ' first.');
   } else if (!shown.length) {
-    note.textContent = 'Nothing like that on the shelf right now.';
+    note.replaceChildren('Nothing like that on the shelf right now. ',
+      el('button', { type: 'button', class: 'button button-quiet', text: 'Ask me to make one', onclick: askForSearch }));
   }
+  const active = !!(view.search || view.category || view.onlyAvailable);
+  $('shop-count').textContent = active && items.length ? (shown.length ? shown.length + (shown.length === 1 ? ' figure' : ' figures') : 'No figures') : '';
+  $('shop-count-row').classList.toggle('is-on', active && items.length > 0);
+  $('clear-filters').hidden = !(active && items.length);
+}
+
+function applyUrl() {
+  const q = new URLSearchParams(location.search);
+  view.search = (q.get('q') || '').trim();
+  view.category = q.get('category') || '';
+  $('search').value = view.search;
+  drawFilters();
+  draw();
+}
+window.addEventListener('popstate', applyUrl);
+
+$('clear-filters').addEventListener('click', () => {
+  view.search = ''; view.category = ''; view.onlyAvailable = false;
+  $('search').value = '';
+  syncUrl(true);
+  drawFilters();
+  draw();
+  $('search').focus();
+});
+
+function askForSearch() {
+  $('custom').scrollIntoView();
+  const box = $('c-message');
+  if (!box.value.trim() && view.search) box.value = view.search;
+  box.focus({ preventScroll: true });
 }
 
 function drawFilters() {
   const cats = [...new Set(items.map((i) => i.category).filter(Boolean))].sort();
   const button = (label, value) => el('button', {
     type: 'button', class: 'filter' + (view.category === value ? ' is-on' : ''), text: label,
-    onclick: () => { view.category = value; drawFilters(); draw(); },
+    onclick: () => {
+      view.category = value; syncUrl(true); drawFilters(); draw();
+      for (const b of $('filters').querySelectorAll('.filter')) if (b.classList.contains('is-on')) b.focus();
+    },
   });
   $('filters').replaceChildren(
     ...(cats.length ? [button('Everything', '')] : []),
@@ -128,7 +187,7 @@ function drawFilters() {
   );
 }
 
-$('search').addEventListener('input', (e) => { view.search = e.target.value.trim(); draw(); });
+$('search').addEventListener('input', (e) => { view.search = e.target.value.trim(); syncUrl(false); draw(); });
 
 /* ----- close-up view ----- */
 
@@ -149,11 +208,25 @@ function openDetail(item) {
   const tags = item.tags || [];
   $('detail-tags').replaceChildren(...tags.flatMap((t, i) => [
     i ? ', ' : 'More like this: ',
-    el('button', { type: 'button', text: t, onclick: () => { detail.close(); $('search').value = t; view.search = t; draw(); $('shop').scrollIntoView(); } }),
+    el('button', { type: 'button', text: t, onclick: () => { detail.close(); $('search').value = t; view.search = t; syncUrl(true); draw(); $('shop').scrollIntoView(); } }),
   ]));
   $('detail-actions').replaceChildren(...actions(item, { inDetail: true }),
+    ...(item.url ? [
+      el('a', { href: item.url, text: 'Its own page' }),
+      el('button', { type: 'button', class: 'link-button', text: navigator.share ? 'Share this one' : 'Copy link', onclick: () => shareFigure(item) }),
+    ] : []),
     ...(item.permalink ? [el('a', { href: item.permalink, rel: 'noopener', text: 'See it on Instagram' })] : []));
+  $('detail-status').textContent = '';
   if (!detail.open) detail.showModal();
+}
+
+async function shareFigure(item) {
+  const url = new URL(item.url, location.origin).href;
+  if (navigator.share) {
+    try { await navigator.share({ title: item.title, url }); return; } catch (err) { if (err.name === 'AbortError') return; }
+  }
+  try { await navigator.clipboard.writeText(url); $('detail-status').textContent = 'Link copied'; }
+  catch { $('detail-status').textContent = "Couldn't copy. The link is " + url; }
 }
 
 for (const d of document.querySelectorAll('dialog')) {
@@ -225,7 +298,7 @@ async function handleReturn() {
       notice.hidden = false;
     }
   }
-  if (order) history.replaceState(null, '', location.pathname);
+  if (order || q.has('hold')) { q.delete('order'); q.delete('hold'); const qs = q.toString(); history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash); }
 }
 
 /* ----- asking by email: request fallback and custom figures ----- */
@@ -316,6 +389,25 @@ async function load() {
   setBag(bag.filter((id) => items.some((i) => i.id === id && i.status === 'available')));
 }
 
+// Links from a figure's own page: /?add=ID, /?buy=ID, /?like=ID, /?figure=ID.
+function handleAction() {
+  const q = new URLSearchParams(location.search);
+  for (const name of ['add', 'buy', 'like', 'figure']) {
+    if (!q.has(name)) continue;
+    const item = items.find((i) => i.id === q.get(name));
+    if (!item) return;
+    q.delete(name);
+    const qs = q.toString();
+    history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
+    const free = item.status === 'available';
+    if (name === 'add' && free && (site.checkout || demo)) { if (!inBag(item.id)) setBag([...bag, item.id]); openBag(); }
+    else if (name === 'buy' && free && !site.checkout) openBuy(item);
+    else if (name === 'like') askForOneLike(item);
+    else openDetail(item);
+    return;
+  }
+}
+
 // Preview copy only (no server behind the page): send the owner links to the
 // demo admin and the "how it works" doc instead of the real /admin/.
 const PREVIEW_ADMIN = 'https://claude.ai/artifact/FWc7bvCGT1JzrrMtvLSiZT';
@@ -332,4 +424,5 @@ const PREVIEW_DOC = 'https://claude.ai/artifact/4PXvC96Tck1Vbji1FY1WJq';
   applySite();
   await handleReturn();
   await load();
+  handleAction();
 })();

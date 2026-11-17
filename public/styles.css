@@ -188,6 +188,11 @@ figcaption {
 .only-available input { accent-color: var(--sage-deep); width: 1.05rem; height: 1.05rem; }
 
 .shop-note { max-width: var(--page); margin: 1rem auto 0; padding: 0 var(--gutter); color: var(--cocoa-soft); }
+.shop-note .button { margin-top: 0.6rem; display: block; }
+.shop-count { max-width: var(--page); margin: 0 auto; padding: 0 var(--gutter); display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1rem; }
+.shop-count.is-on { margin-top: 0.9rem; }
+.link-button { font: inherit; color: inherit; background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.detail-status { min-height: 1.4em; margin: 0.4rem 0 0; color: var(--cocoa-soft); }
 
 /* The shelf copies the white tiered risers on the market table. There is no
    sideways gap between figures, so each figure's strip of shelf joins the
