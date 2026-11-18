@@ -134,13 +134,19 @@ Posting has been tested only against a stand-in for Meta's API. Whether a
 development-mode app may publish to its own account without Meta's App Review
 needs confirming with the first real post.
 
-## Email when a request comes in (optional, untested)
+## Email
 
-Turn on Email Routing for clayerbear.com, verify Claire's address, then
-uncomment the `send_email` block in `wrangler.jsonc` and add `NOTIFY_FROM`
-and `NOTIFY_TO` vars. Without it, requests wait in **Orders**. Paid orders do
-not send an email from this site; Stripe can email Claire on each payment
-(Stripe dashboard > Settings > Communication preferences).
+Email Routing is on for clayerbear.com. `request@`, `hello@` and `claire@`
+forward to Claire's inbox (Cloudflare dashboard > Email > Email Routing to add
+or change addresses).
+
+Each custom-figure or "I'd like this one" request also sends Claire an email
+from request@clayerbear.com, with Reply-To set to the customer. Her inbox is
+the `NOTIFY_TO` secret (it must be a verified destination address in Email
+Routing); `NOTIFY_FROM` is in `wrangler.jsonc`. Requests are always saved in
+**Orders** too. Paid orders do not send an email from this site; Stripe can
+email Claire on each payment (Stripe dashboard > Settings > Communication
+preferences).
 
 ## Working on it locally
 

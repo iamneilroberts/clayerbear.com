@@ -27,14 +27,14 @@
   ],
 
   "vars": {
-    "SHOW_SAMPLES": "false"   // "true" shows the sample figures while the shelf is empty
+    "SHOW_SAMPLES": "false",   // "true" shows the sample figures while the shelf is empty
+    "NOTIFY_FROM": "request@clayerbear.com"
   },
 
-  // Optional email when a request comes in. Needs Email Routing turned on for
-  // clayerbear.com and the destination address verified there. Then uncomment
-  // this and the three NOTIFY lines.
-  // "send_email": [{ "name": "NOTIFY", "destination_address": "claire@example.com" }],
-  // and add to "vars":  "NOTIFY_FROM": "shop@clayerbear.com", "NOTIFY_TO": "claire@example.com"
+  // Email Claire when a request comes in, from request@clayerbear.com. Needs
+  // Email Routing on for clayerbear.com with her address verified there.
+  // NOTIFY_TO (her inbox) is a secret so it stays out of this public repo.
+  "send_email": [{ "name": "NOTIFY" }],
 
   "routes": [
     { "pattern": "clayerbear.com", "custom_domain": true },
@@ -48,4 +48,5 @@
   //   STRIPE_SECRET_KEY       turns on card checkout (see README)
   //   STRIPE_WEBHOOK_SECRET   lets Stripe tell the site a payment went through
   //   IG_ACCESS_TOKEN         lets the admin page post to Instagram (see README)
+  //   NOTIFY_TO               inbox that gets request emails
 }
